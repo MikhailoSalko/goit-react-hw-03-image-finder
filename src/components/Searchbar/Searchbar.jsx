@@ -1,25 +1,49 @@
+import { Component } from 'react';
+import { Report } from 'notiflix';
 import PropTypes from 'prop-types';
 import styles from './Searchbar.module.css';
 
-const Searchbar = ({ onSubmit }) => {
-  return (
-    <header className={styles.searchbar}>
-      <form className={styles.searchForm} onSubmit={onSubmit}>
-        <button type="submit" className={styles.searchFormButton}>
-          <span className={styles.searchFormButtonLabel}>Search</span>
-        </button>
+class Searchbar extends Component {
+  state = {
+    searchQuery: '',
+  };
 
-        <input
-          className={styles.searchFormInput}
-          type="text"
-          autoComplete="off"
-          autoFocus
-          placeholder="Search images and photos"
-        />
-      </form>
-    </header>
-  );
-};
+  handleInputChange = e => {
+    const searchQuery = e.target.value.trim();
+    this.setState({ searchQuery });
+  };
+
+  handleSubmitForm = e => {
+    e.preventDefault();
+    if (this.state.searchQuery.trim() === '') {
+      Report.info('Please, enter searchquery.');
+      return;
+    }
+    this.props.onSubmit(this.state.searchQuery);
+  };
+
+  render() {
+    return (
+      <header className={styles.searchbar}>
+        <form className={styles.searchForm} onSubmit={this.handleSubmitForm}>
+          <button type="submit" className={styles.searchFormButton}>
+            <span className={styles.searchFormButtonLabel}>Search</span>
+          </button>
+
+          <input
+            onChange={this.handleInputChange}
+            className={styles.searchFormInput}
+            // value={this.state.searchQuery}
+            type="text"
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
+          />
+        </form>
+      </header>
+    );
+  }
+}
 
 export default Searchbar;
 
