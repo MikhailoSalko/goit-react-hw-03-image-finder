@@ -14,7 +14,7 @@ export const fetchPhotos = (searchQuery, page = 1) => {
       if (!response.ok) {
         throw new Error(response.status);
       }
-      console.log(response);
+      // console.log(response);
       return response.json();
     }
   );

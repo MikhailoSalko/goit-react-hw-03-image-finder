@@ -34,7 +34,7 @@ class App extends Component {
       this.setState({ isLoading: true });
       fetchPhotos(newSearchQuery, nextPage)
         .then(data => {
-          console.log(data);
+          // console.log(data);
           if (data.total === 0) {
             return Notiflix.Report.info('There are no photos per your request');
           }
