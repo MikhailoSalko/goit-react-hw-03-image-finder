@@ -6,7 +6,7 @@ import ImageGallery from './ImageGallery/ImageGallery';
 import Modal from './Modal/Modal';
 import { ModalPhoto } from './ModalPhoto/ModalPhoto';
 import Button from './Button/Button';
-import { fetchPhotos } from './api/fetchPhotos';
+import { fetchPhotos } from '../api/fetchPhotos';
 
 Notiflix.Report.init({
   width: '400px',
@@ -57,14 +57,18 @@ class App extends Component {
     });
   };
 
-  openModal = ({ src, alt }) => {
+  openModal = ({ largeImageURL, tags }) => {
     this.setState({
       showModal: true,
       modalPhoto: {
-        src,
-        alt,
+        largeImageURL,
+        tags,
       },
     });
+  };
+
+  closeModal = () => {
+    this.setState({ showModal: false, modalPhoto: null });
   };
 
   render() {
@@ -89,7 +93,7 @@ class App extends Component {
         <Searchbar onSubmit={this.getSearchQuery} />
         <ImageGallery hits={hits} onClick={this.openModal} />
         {showModal && (
-          <Modal>
+          <Modal onClose={this.closeModal}>
             <ModalPhoto {...modalPhoto} />
           </Modal>
         )}
