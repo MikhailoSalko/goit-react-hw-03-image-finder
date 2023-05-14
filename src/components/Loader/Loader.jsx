@@ -1,16 +1,16 @@
-import { Rings } from 'react-loader-spinner';
+import { TailSpin } from 'react-loader-spinner';
 
 const Loader = () => {
   return (
-    <Rings
+    <TailSpin
       height="80"
       width="80"
       color="#4fa94d"
-      radius="6"
-      wrapperStyle={{}}
+      ariaLabel="tail-spin-loading"
+      radius="1"
+      wrapperStyle={{ justifySelf: 'center' }}
       wrapperClass=""
       visible={true}
-      ariaLabel="rings-loading"
     />
   );
 };

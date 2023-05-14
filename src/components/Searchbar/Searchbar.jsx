@@ -23,6 +23,7 @@ class Searchbar extends Component {
   };
 
   render() {
+    const { searchQuery } = this.state;
     return (
       <header className={styles.searchbar}>
         <form className={styles.searchForm} onSubmit={this.handleSubmitForm}>
@@ -33,7 +34,7 @@ class Searchbar extends Component {
           <input
             onChange={this.handleInputChange}
             className={styles.searchFormInput}
-            // value={this.state.searchQuery}
+            value={searchQuery}
             type="text"
             autoComplete="off"
             autoFocus

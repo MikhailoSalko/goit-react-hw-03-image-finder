@@ -1,39 +1,75 @@
 import { Component } from 'react';
+import Notiflix from 'notiflix';
 import Searchbar from './Searchbar/Searchbar';
-// import Loader from './Loader/Loader';
-// import ImageGallery from './ImageGallery/ImageGallery';
-// import Modal from './Modal/Modal';
-// import Button from './Button/Button';
+import Loader from './Loader/Loader';
+import ImageGallery from './ImageGallery/ImageGallery';
+import Modal from './Modal/Modal';
+import { ModalPhoto } from './ModalPhoto/ModalPhoto';
+import Button from './Button/Button';
+import { fetchPhotos } from './api/fetchPhotos';
+
+Notiflix.Report.init({
+  width: '400px',
+  titleFontSize: '16px',
+  titleMaxLength: 50,
+});
 
 class App extends Component {
   state = {
     searchQuery: '',
+    hits: [],
+    page: 1,
+    error: null,
+    isLoading: false,
+    showModal: false,
+    modalPhoto: null,
   };
 
-  getSearchQuery = searchQuery => {
-    return this.setState({ searchQuery });
-  };
+  componentDidUpdate(_, prevState) {
+    const { searchQuery: prevSearchQuery, page: prevPage } = prevState;
+    const { searchQuery: newSearchQuery, page: nextPage } = this.state;
 
-  componentDidUpdate(_, { searchQuery: oldSearchQuery }) {
-    const { searchQuery: newSearchQuery } = this.state;
-    if (oldSearchQuery !== newSearchQuery) {
-      console.log(this.state.searchQuery);
-      fetch(
-        `https://pixabay.com/api/?key=34983151-308c1e13d6f3ee051936793b8&q=${newSearchQuery}&image_type=photo&orientation=horizontal&page=1&per_page=12`
-      )
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(response.status);
+    if (prevSearchQuery !== newSearchQuery || prevPage !== nextPage) {
+      // console.log(this.state.searchQuery);
+      this.setState({ isLoading: true });
+      fetchPhotos(newSearchQuery, nextPage)
+        .then(data => {
+          console.log(data);
+          if (data.total === 0) {
+            return Notiflix.Report.info('There are no photos per your request');
           }
-          console.log(response);
-          return response.json();
+          return this.setState(({ hits }) => {
+            return { hits: [...hits, ...data.hits] };
+          });
         })
-        .then(data => console.log(data))
-        .catch(error => console.log(error));
+        .catch(error => this.setState({ error: error.message }))
+        .finally(() => this.setState({ isLoading: false }));
     }
   }
 
+  getSearchQuery = searchQuery => {
+    return this.setState({ searchQuery, hits: [], page: 1 });
+  };
+
+  updatePageByLoadMoreBtn = () => {
+    this.setState(({ page }) => {
+      return { page: page + 1 };
+    });
+  };
+
+  openModal = ({ src, alt }) => {
+    this.setState({
+      showModal: true,
+      modalPhoto: {
+        src,
+        alt,
+      },
+    });
+  };
+
   render() {
+    const { hits, isLoading, showModal, error, modalPhoto } = this.state;
+
     return (
       <div
         style={{
@@ -46,11 +82,19 @@ class App extends Component {
           paddingBottom: '24px',
         }}
       >
+        {error &&
+          Notiflix.Report.failure(
+            'Something went wrong, please try again later'
+          )}
         <Searchbar onSubmit={this.getSearchQuery} />
-        {/* <ImageGallery /> */}
-        {/* <Modal /> */}
-        {/* <Button /> */}
-        {/* <Loader /> */}
+        <ImageGallery hits={hits} onClick={this.openModal} />
+        {showModal && (
+          <Modal>
+            <ModalPhoto {...modalPhoto} />
+          </Modal>
+        )}
+        {hits.length > 0 && <Button onClick={this.updatePageByLoadMoreBtn} />}
+        {isLoading && <Loader />}
       </div>
     );
   }
