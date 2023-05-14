@@ -9,7 +9,7 @@ const ImageGallery = ({ hits, onClick }) => {
         <ImageGalleryItem
           key={id}
           src={webformatURL}
-          alt={tags}
+          tags={tags}
           largeImageURL={largeImageURL}
           onClick={onClick}
         />
@@ -29,6 +29,7 @@ ImageGallery.propTypes = {
   hits: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
       webformatURL: PropTypes.string.isRequired,
       tags: PropTypes.string.isRequired,
     })
