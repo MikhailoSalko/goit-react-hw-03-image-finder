@@ -14,6 +14,13 @@ Notiflix.Report.init({
   titleMaxLength: 50,
 });
 
+Notiflix.Notify.init({
+  distance: '5px',
+  width: '450px',
+  fontSize: '18px',
+  timeout: 4000,
+});
+
 class App extends Component {
   state = {
     searchQuery: '',
@@ -48,6 +55,12 @@ class App extends Component {
   }
 
   getSearchQuery = searchQuery => {
+    if (searchQuery === this.state.searchQuery) {
+      return Notiflix.Notify.info(
+        'We are already showing photos at your request'
+      );
+    }
+
     return this.setState({ searchQuery, hits: [], page: 1 });
   };
 
